@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FDR/Sanchaypatra প্রোফিট ক্যালকুলেটর - Hosen Academy</title>
+  <style>
+    body {
+      font-family: "Siyam Rupali", sans-serif;
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 20px;
+      background-image: url('https://www.hosenacademy.com/images/background.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #ffffffdd;
+      padding: 20px;
+      border-radius: 15px;
+      margin: auto;
+    }
+    h1 {
+      color: #0a4970;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+    button {
+      background-color: #0a4970;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      background-color: #e6f4ff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .promo {
+      margin-top: 30px;
+      font-size: 14px;
+      text-align: center;
+      background-color: #ecfaff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📘 FDR/সঞ্চয়পত্র প্রোফিট ক্যালকুলেটর</h1>
+  <label>আমানতের পরিমাণ (৳):</label>
+  <input type="number" id="amount">
+
+  <label>মুনাফার হার (শতাংশ):</label>
+  <input type="number" id="rate">
+
+  <label>মেয়াদ:</label>
+  <select id="period">
+    <option value="1">১ মাস</option>
+    <option value="3">৩ মাস</option>
+    <option value="6">৬ মাস</option>
+    <option value="12">১ বছর</option>
+  </select>
+
+  <label>ট্যাক্স রিটার্ন দাখিল করা হয়েছে?</label>
+  <select id="taxStatus">
+    <option value="10">হ্যাঁ (১০%)</option>
+    <option value="15">না (১৫%)</option>
+    <option value="manual">ম্যানুয়ালি দিন</option>
+  </select>
+
+  <div id="manualTaxContainer" style="display:none">
+    <label>ম্যানুয়াল ট্যাক্স হার (%):</label>
+    <input type="number" id="manualTax">
+  </div>
+
+  <label>বছরের সর্বোচ্চ স্থিতি (৳):</label>
+  <input type="number" id="maxBalance">
+
+  <button onclick="calculateProfit()">হিসাব করুন</button>
+
+  <div class="result" id="result"></div>
+  <div class="promo">
+    📘 ব্যাংকিং, JAIBB, AIBB ও ১-১০ শ্রেণির গণিত শিখুন Hosen Academy-তে।<br>
+    ব্লগ ও আর্টিকেল পড়ে নিজেকে আপডেট রাখুন।<br>
+    👉 <a href="https://www.hosenacademy.com/" target="_blank">HosenAcademy.com</a><br>
+    📱 <a href="https://hosenacademyapp.netlify.app/" target="_blank">Install App</a><br>
+    ☎️ সহায়তা: WhatsApp 01841986933
+  </div>
+</div>
+
+<script>
+function calculateExciseDuty(balance) {
+  if (balance <= 300000) return 0;
+  if (balance <= 500000) return 150;
+  if (balance <= 1000000) return 500;
+  if (balance <= 5000000) return 3000;
+  if (balance <= 10000000) return 5000;
+  if (balance <= 50000000) return 20000;
+  return 50000;
+}
+
+function calculateProfit() {
+  const amount = parseFloat(document.getElementById('amount').value);
+  const rate = parseFloat(document.getElementById('rate').value);
+  const period = parseInt(document.getElementById('period').value);
+  let taxRate = parseFloat(document.getElementById('taxStatus').value);
+
+  if (document.getElementById('taxStatus').value === 'manual') {
+    taxRate = parseFloat(document.getElementById('manualTax').value);
+  }
+
+  const maxBalance = parseFloat(document.getElementById('maxBalance').value);
+  const excise = calculateExciseDuty(maxBalance);
+
+  const profitBeforeTax = amount * (rate / 100) * (period / 12);
+  const tax = profitBeforeTax * (taxRate / 100);
+  const profitAfterTax = profitBeforeTax - tax;
+  const finalAmount = amount + profitAfterTax - excise;
+
+  document.getElementById('result').innerHTML = `
+    মোট মুনাফা (Tax বাদে): ৳${profitBeforeTax.toFixed(2)}<br>
+    ট্যাক্স (${taxRate}%): ৳${tax.toFixed(2)}<br>
+    আবগারি শুল্ক: ৳${excise.toFixed(2)}<br>
+    কর ও শুল্ক বাদে প্রাপ্ত মোট অর্থ: ৳${finalAmount.toFixed(2)}
+  `;
+}
+
+document.getElementById('taxStatus').addEventListener('change', function () {
+  document.getElementById('manualTaxContainer').style.display = this.value === 'manual' ? 'block' : 'none';
+});
+</script>
+</body>
+</html>
